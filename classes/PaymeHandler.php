@@ -138,13 +138,9 @@ class PaymeHandler
 
 
         // take away balance or update status order
-        $result = true;
-        $message = 'Can not cancel transaction';
-        Event::fire('shohabbos.payme.cancelTransaction', [$transaction, &$result, &$message]);
-
-        if (!$result) {
-            throw new \Exception($message, -31007);
-        }
+        $obPaymentGateway = new PaymentGateway();
+        $obPaymentGateway->processCancelRequest($transaction->owner_id);
+        
 
         $transaction->state = -2;
         $transaction->reason = $reason;
@@ -204,14 +200,10 @@ class PaymeHandler
         }
 
         // fill balance or update status order
-        $result = true;
-        $message = 'Unknown error';
-        Event::fire('shohabbos.payme.performTransaction', [$transaction, &$result, &$message]);
+        $obPaymentGateway = new PaymentGateway();
+        $obPaymentGateway->processSuccessRequest($transaction->owner_id);
 
-        if (!$result) {
-            throw new \Exception($message, -31008);
-        }
-
+        
         $transaction->perform_time = time() * 1000;
         $transaction->state = 2;
         $transaction->save();

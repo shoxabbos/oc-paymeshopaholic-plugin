@@ -81,4 +81,40 @@ class PaymentGateway extends AbstractPaymentGateway
         $this->sRedirectURL = 'https://payme.uz';
         $this->bIsRedirect = true;
     }
+
+
+    /**
+     * Process success request
+     * @param string $orderId
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function processSuccessRequest($orderId)
+    {
+        $this->initOrderObject($orderId);
+        if (empty($this->obOrder) || empty($this->obPaymentMethod)) {
+            return Redirect::to('/');
+        }
+
+        //Set success status in order
+        $this->setSuccessStatus();
+    }
+
+    /**
+     * Process cancel request
+     * @param string $orderId
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function processCancelRequest($orderId)
+    {
+        //Init order object
+        $this->initOrderObject($orderId);
+        if (empty($this->obOrder) || empty($this->obPaymentMethod)) {
+            return Redirect::to('/');
+        }
+
+        //Set cancel status in order
+        $this->setCancelStatus();
+    }
+
+
 }
