@@ -1,0 +1,6 @@
+plugin:
+    name: 'shohabbos.paymeshopaholic::lang.plugin.name'
+    description: 'shohabbos.paymeshopaholic::lang.plugin.description'
+    author: Shohabbos
+    icon: oc-icon-paypal
+    homepage: 'https://itmaker.uz'

@@ -1,0 +1,59 @@
+columns:
+    id:
+        label: id
+        type: number
+        searchable: true
+    transaction:
+        label: transaction
+        type: text
+        searchable: true
+        invisible: true
+    code:
+        label: code
+        type: text
+        searchable: false
+        invisible: true
+    state:
+        label: state
+        type: text
+    owner_id:
+        label: owner_id
+        type: text
+        searchable: true
+        invisible: false
+    amount:
+        label: amount
+        type: text
+        searchable: true
+    reason:
+        label: reason
+        type: text
+        invisible: true
+    payme_time:
+        label: payme_time
+        type: text
+        invisible: true
+    cancel_time:
+        label: cancel_time
+        type: text
+        invisible: true
+    create_time:
+        label: create_time
+        type: text
+        invisible: true
+    perform_time:
+        label: perform_time
+        type: text
+        invisible: true
+    deleted_at:
+        label: deleted_at
+        type: datetime
+        invisible: true
+    created_at:
+        label: created_at
+        type: datetime
+        invisible: true
+    updated_at:
+        label: updated_at
+        type: datetime
+        invisible: true
