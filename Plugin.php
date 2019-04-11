@@ -12,8 +12,6 @@ class Plugin extends PluginBase
 
 	public $require = ['Lovata.OrdersShopaholic'];
 
-    protected $filesystem;
-
 
     public function registerComponents()
     {
@@ -25,8 +23,6 @@ class Plugin extends PluginBase
 
 
     public function boot() {
-        $this->filesystem = new Filesystem;
-
         $this->addPaymentGateway();
         $this->extendPaymentModelFields();
     }
