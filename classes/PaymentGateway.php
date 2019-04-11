@@ -45,10 +45,11 @@ class PaymentGateway extends AbstractPaymentGateway
     protected function preparePurchaseData()
     {
         $this->arRequestData = [
-            'currency'   => $this->obPaymentMethod->gateway_currency,            
-            'secred_key' => $this->getGatewayProperty('secred_key'),            
-            'total_cost' => $this->obOrder->total_price_value,            
-            'user_name'  => $this->getOrderProperty('name'),            
+            'm' => $this->getGatewayProperty('merchant_id'),
+            'ac.id' => $this->obOrder->id,
+            'a' => $this->obOrder->total_price_value * 100,
+            'l' => 'ru',
+            'c' => url()->current()
         ];
     }
     
@@ -58,11 +59,6 @@ class PaymentGateway extends AbstractPaymentGateway
     */
     protected function validatePurchaseData()
     {
-        if (empty($this->arRequestData['currency'])) {
-            $this->sMessage = 'Currency is required';
-            return false;
-        }
-        
         return true;
     }
     
@@ -71,6 +67,11 @@ class PaymentGateway extends AbstractPaymentGateway
     */
     protected function sendPurchaseData()
     {
+        $arPaymentData = (array) $this->obOrder->payment_data;
+        $arPaymentData['request'] = $this->arRequestData;
+
+        $this->obOrder->payment_data = $arPaymentData;
+        $this->obOrder->save();
     }
     
     /**
@@ -78,15 +79,7 @@ class PaymentGateway extends AbstractPaymentGateway
     */
     protected function processPurchaseResponse()
     {
-        $data = [
-            'm' => $this->getGatewayProperty('merchant_id'),
-            'ac.id' => $this->obOrder->id,
-            'a' => $this->obOrder->total_price_value * 100,
-            'l' => 'ru',
-            'c' => url()->current()
-        ];
-
-        $this->sRedirectURL = 'https://checkout.paycom.uz/'.base64_encode(http_build_query($data, '', ';'));
+        $this->sRedirectURL = 'https://checkout.paycom.uz/'.base64_encode(http_build_query($this->arRequestData, '', ';'));
         $this->bIsRedirect = true;
     }
 
