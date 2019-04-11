@@ -139,7 +139,7 @@ class PaymeHandler
 
         // take away balance or update status order
         $obPaymentGateway = new PaymentGateway();
-        $obPaymentGateway->processCancelRequest($transaction->owner_id);
+        $obPaymentGateway->processCancelRequest($transaction->owner_id, $params);
         
 
         $transaction->state = -2;
@@ -163,7 +163,7 @@ class PaymeHandler
         if ($validator->fails()) {
             throw new \Exception( 'Invalid Request', -32600);
         }
-        
+         
         // fetch vars
         $id = $params['id'];
 
@@ -201,7 +201,7 @@ class PaymeHandler
 
         // fill balance or update status order
         $obPaymentGateway = new PaymentGateway();
-        $obPaymentGateway->processSuccessRequest($transaction->owner_id);
+        $obPaymentGateway->processSuccessRequest($transaction->owner_id, $params);
 
         
         $transaction->perform_time = time() * 1000;

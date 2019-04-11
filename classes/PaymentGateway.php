@@ -21,7 +21,7 @@ class PaymentGateway extends AbstractPaymentGateway
         return $this->arResponse;
     }
     
-    /**
+    /** 
     * Get redirect URL
     * @return string
     */
@@ -89,11 +89,20 @@ class PaymentGateway extends AbstractPaymentGateway
      * @param string $orderId
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function processSuccessRequest($orderId)
+    public function processSuccessRequest($orderId, $paymentResponse = [])
     {
         $this->initOrderObject($orderId);
         if (empty($this->obOrder) || empty($this->obPaymentMethod)) {
             return Redirect::to('/');
+        }
+
+        if (!empty($paymentResponse)) {
+            $arPaymentResponse = (array) $this->obOrder->payment_response;
+            $arPaymentResponse['response'] = (array) $paymentResponse;
+
+            $this->obOrder->payment_response = $arPaymentResponse;
+            $this->obOrder->transaction_id = $paymentResponse['id'];
+            $this->obOrder->save();
         }
 
         //Set success status in order
@@ -105,12 +114,21 @@ class PaymentGateway extends AbstractPaymentGateway
      * @param string $orderId
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function processCancelRequest($orderId)
+    public function processCancelRequest($orderId, $paymentResponse = [])
     {
         //Init order object
         $this->initOrderObject($orderId);
         if (empty($this->obOrder) || empty($this->obPaymentMethod)) {
             return Redirect::to('/');
+        }
+
+        if (!empty($paymentResponse)) {
+            $arPaymentResponse = (array) $this->obOrder->payment_response;
+            $arPaymentResponse['cancel_response'] = (array) $paymentResponse;
+
+            $this->obOrder->payment_response = $arPaymentResponse;
+            $this->obOrder->transaction_id = $paymentResponse['id'];
+            $this->obOrder->save();
         }
 
         //Set cancel status in order
