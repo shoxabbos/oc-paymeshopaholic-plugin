@@ -78,7 +78,15 @@ class PaymentGateway extends AbstractPaymentGateway
     */
     protected function processPurchaseResponse()
     {
-        $this->sRedirectURL = 'https://payme.uz';
+        $data = [
+            'm' => $this->getGatewayProperty('merchant_id'),
+            'ac.id' => $this->obOrder->id,
+            'a' => $this->obOrder->total_price_value * 100,
+            'l' => 'ru',
+            'c' => url()->current()
+        ];
+
+        $this->sRedirectURL = 'https://checkout.paycom.uz/'.base64_encode(http_build_query($data, '', ';'));
         $this->bIsRedirect = true;
     }
 
