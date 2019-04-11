@@ -2,7 +2,6 @@
 
 use Event;
 use System\Classes\PluginBase;
-use Illuminate\Filesystem\Filesystem;
 
 use Lovata\OrdersShopaholic\Models\PaymentMethod;
 use Shohabbos\Paymeshopaholic\Classes\PaymentGateway;
