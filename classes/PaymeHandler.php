@@ -89,7 +89,7 @@ class PaymeHandler
             'cancel_time' => (int) $transaction->cancel_time,
             'transaction' => (string) $transaction->id,
             'state' => (int) $transaction->state,
-            'reason' => (int) $transaction->reason
+            'reason' => empty($transaction->reason) ? null : (int) $transaction->reason
         ];
     }
 
@@ -191,13 +191,13 @@ class PaymeHandler
         // check timeout
         $currentTime = time() * 1000;
         $timeoutTime = (3600 * 1000) + $transaction->create_time;
-        if ($timeoutTime < $currentTime) {
-            $transaction->state = -1;
-            $transaction->reason = 4;
-            $transaction->save();
+        //if ($timeoutTime < $currentTime) {
+            //$transaction->state = -1;
+            //$transaction->reason = 4;
+            //$transaction->save();
 
-            throw new \Exception('Timeout', -31008);
-        }
+            //throw new \Exception('Timeout', -31008);
+        //}
 
         // fill balance or update status order
         $obPaymentGateway = new PaymentGateway();
@@ -246,11 +246,11 @@ class PaymeHandler
                 $currentTime = time() * 1000;
                 $timeoutTime = ($this->getGatewayProperty('timeout') * 1000) + $transaction->create_time;
                 if ($timeoutTime < $currentTime) {
-                    $transaction->state = -1;
-                    $transaction->reason = 4;
-                    $transaction->save();
+                    //$transaction->state = -1;
+                    //$transaction->reason = 4;
+                    //$transaction->save();
 
-                    throw new \Exception( 'Timeout', -31008);
+                    //throw new \Exception( 'Timeout', -31008);
                 }
 
                 return [
@@ -321,7 +321,8 @@ class PaymeHandler
         // validate amount
         $amount /= 100;
         $result = $amount >= $this->getGatewayProperty('min_amount', 1) && $amount <= $this->getGatewayProperty('max_amount', 100);
-        if (!$result) {
+        
+        if (!$result || $amount != $order->total_price_value) {
             throw new \Exception('Invalid amount', -31001);
         }
         
