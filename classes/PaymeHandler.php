@@ -1,5 +1,6 @@
 <?php namespace Shohabbos\Paymeshopaholic\Classes;
 
+use Input;
 use Event;
 use Validator;
 use Lovata\OrdersShopaholic\Models\Order;
@@ -16,6 +17,31 @@ class PaymeHandler
         $this->paymentModel = PaymentMethod::where('gateway_id', 'payme')->first();
     }
 
+    public function generatePaymentUrl() {
+        $params = Input::only('amount', 'order_id');
+
+        $validator = Validator::make($params, [
+            'amount' => 'required',
+            'order_id' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->messages()->first()], 422);
+        }        
+
+
+        $arRequestData = [
+            'm' => $this->getGatewayProperty('merchant_id'),
+            'ac.id' => $params['order_id'],
+            'a' => $params['amount'] * 100,
+            'l' => 'ru',
+            'c' => url()->current()
+        ];
+
+        return [
+            'data' => 'https://checkout.paycom.uz/'.base64_encode(http_build_query($arRequestData, '', ';'))
+        ];
+    }
 
     public function listen(\Illuminate\Http\Request $mainRequest) {
         // get vars 
